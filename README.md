@@ -17,9 +17,9 @@ var app = express();
 var Strategy;
 
 if (process.env.NODE_ENV == 'test' ) {
-  Strategy = require('passport-mock').Strategy;
+  Strategy = require('@passport-next/passport-mocked').Strategy;
 } else {
-  Strategy = require('passport-facebook').Strategy;
+  Strategy = require('@passport-next/passport-facebook').Strategy;
 }
 
 passport.use(new Strategy({
@@ -43,7 +43,7 @@ passport.use(new Strategy({
 // using the testing framework of your choice
 // probably something like selenium, since you'll most likely need a browser
 
-var passport = require('passport');
+var passport = require('@passport-next/passport');
 
 this.When(^/I log in to (.+) as:$/, function (provider, table, next) {
   var strategy = passport._strategies[provider];
