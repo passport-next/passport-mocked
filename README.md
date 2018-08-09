@@ -1,4 +1,12 @@
 # Passport-mock
+
+[![NPM version](https://img.shields.io/npm/v/@passport-next/passport-mocked.svg)](https://www.npmjs.com/package/@passport-next/passport-mocked)
+[![Build Status](https://travis-ci.org/passport-next/passport-mocked.svg?branch=master)](https://travis-ci.org/passport-next/passport-mocked)
+[![Coverage Status](https://coveralls.io/repos/github/passport-next/passport-mocked/badge.svg?branch=master)](https://coveralls.io/github/passport-next/passport-mocked?branch=master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/ad14c75df09e29752eee/maintainability)](https://codeclimate.com/github/passport-next/passport-mocked/maintainability)
+[![Dependencies](https://david-dm.org/passport-next/passport-mocked.png)](https://david-dm.org/passport-next/passport-mocked)
+<!--[![SAST](https://gitlab.com/passport-next/passport-mocked/badges/master/build.svg)](https://gitlab.com/passport-next/passport-mocked/badges/master/build.svg)-->
+
 Designed as a drop in replacement for any passport auth strategy for integration tests.
 
 #### How to use in your code
