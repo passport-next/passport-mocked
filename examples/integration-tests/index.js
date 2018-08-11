@@ -1,4 +1,4 @@
-var passport = require('passport');
+var passport = require('@passport-next/passport');
 var port = 3445;
 
 passport.serializeUser(function(user, done) { done(null, user); });

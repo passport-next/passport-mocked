@@ -1,6 +1,6 @@
 var Strategy = require('../').Strategy
   , expect = require('chai').expect
-  , passport = require('passport');
+  , passport = require('@passport-next/passport');
 
 it('inherits from passport', function () {
   expect(Strategy.super_).to.eql(passport.Strategy);
