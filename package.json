@@ -20,7 +20,7 @@
     "@passport-next/passport": "0.5.0"
   },
   "devDependencies": {
-    "chai": "^3.2.0",
-    "mocha": "^2.2.5"
+    "chai": "^4.x.x",
+    "mocha": "5.x.x"
   }
 }
