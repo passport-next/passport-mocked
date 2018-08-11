@@ -1,74 +1,80 @@
-var Strategy = require('../').Strategy
-  , expect = require('chai').expect
-  , passport = require('@passport-next/passport');
+/* eslint-disable no-underscore-dangle, camelcase, no-proto */
 
-it('inherits from passport', function () {
+const { expect } = require('chai');
+const passport = require('@passport-next/passport');
+const { Strategy } = require('../');
+
+it('inherits from passport', () => {
   expect(Strategy.super_).to.eql(passport.Strategy);
 });
 
-describe('init', function () {
-  describe('name', function () {
-    it('has a default', function () {
-      var strategy = Object.create(new Strategy({ callbackURL: '/cb' }, function () {}));
-      expect(strategy.name).to.eql('mocked')
+describe('init', () => {
+  describe('name', () => {
+    it('has a default', () => {
+      const strategy = Object.create(new Strategy({ callbackURL: '/cb' }, (() => {})));
+      expect(strategy.name).to.eql('mocked');
     });
 
-    it('can be set', function () {
-      var strategy = Object.create(new Strategy({ name: 'test', callbackURL: '/cb' }, function () {}));
-      expect(strategy.name).to.eql('test')
+    it('can be set', () => {
+      const strategy = Object.create(new Strategy({ name: 'test', callbackURL: '/cb' }, (() => {})));
+      expect(strategy.name).to.eql('test');
     });
   });
 
-  describe('verify', function () {
-    it('requires a verifiy function be passed in', function () {
-      expect(function () {
+  describe('verify', () => {
+    it('requires a verify function be passed in', () => {
+      expect(() => {
+        // eslint-disable-next-line no-new
         new Strategy({ callbackURL: '/cb' });
       }).to.throw(Error);
     });
   });
 
-  describe('callbackUrl', function () {
-    it('requires a callbackUrl', function () {
-      expect(function (){
-        new Strategy({}, function () {});
+  describe('callbackUrl', () => {
+    it('requires a callbackUrl', () => {
+      expect(() => {
+        // eslint-disable-next-line no-new
+        new Strategy({}, (() => {}));
       }).to.throw(TypeError);
     });
 
-    it('can be set for OAuth 2', function () {
-      var strategy = Object.create(new Strategy({ callbackURL: '/here' }, function () {}));
+    it('can be set for OAuth 2', () => {
+      const strategy = Object.create(new Strategy({ callbackURL: '/here' }, (() => {})));
       expect(strategy._callbackURL).to.eql('/here');
     });
 
-    it('can be set for OpenID Connect', function () {
-      var strategy = Object.create(new Strategy({ client: { redirect_uris: [ '/here' ] } }, function () {}));
+    it('can be set for OpenID Connect', () => {
+      const strategy = Object.create(new Strategy({ client: { redirect_uris: ['/here'] } }, (() => {})));
       expect(strategy._callbackURL).to.eql('/here');
     });
   });
 
-  describe('passReqToCallback', function () {
-    it('defaults to false', function () {
-      var strategy = Object.create(new Strategy({ callbackURL: '/here' }, function () {}));
+  describe('passReqToCallback', () => {
+    it('defaults to false', () => {
+      const strategy = Object.create(new Strategy({ callbackURL: '/here' }, (() => {})));
+      // eslint-disable-next-line no-unused-expressions
       expect(strategy._passReqToCallback).to.be.false;
     });
 
-    it('can be set to true', function () {
-      var strategy = Object.create(new Strategy({ passReqToCallback: true, callbackURL: '/here' }, function () {}));
+    it('can be set to true', () => {
+      const strategy = Object.create(new Strategy({ passReqToCallback: true, callbackURL: '/here' }, (() => {})));
+      // eslint-disable-next-line no-unused-expressions
       expect(strategy._passReqToCallback).to.be.true;
     });
   });
 });
 
-describe('#authenticate', function (){
-  var req;
+describe('#authenticate', () => {
+  let req;
 
-  beforeEach(function (){
+  beforeEach(() => {
     req = { query: { } };
   });
 
-  context('when __mock_strategy_callback is not set', function () {
-    it('redirects the user to the callbackURL with the correct query param', function (done) {
-      var strategy = Object.create(new Strategy({ callbackURL: '/cb' }, function () {}));
-      strategy.redirect = function (path) {
+  context('when __mock_strategy_callback is not set', () => {
+    it('redirects the user to the callbackURL with the correct query param', (done) => {
+      const strategy = Object.create(new Strategy({ callbackURL: '/cb' }, (() => {})));
+      strategy.redirect = function redirect(path) {
         expect(path).to.eql('/cb?__mock_strategy_callback=true');
         done();
       };
@@ -76,23 +82,24 @@ describe('#authenticate', function (){
     });
   });
 
-  context('when __mock_strategy_callback is set', function () {
-    var strategy;
+  context('when __mock_strategy_callback is set', () => {
+    let strategy;
 
-    beforeEach(function () {
+    beforeEach(() => {
       req.query.__mock_strategy_callback = true;
     });
 
-    describe('#_error', function () {
-      it('calls the fail method', function (done) {
-        strategy = new Strategy({ callbackURL: '/cb' }, function (access_token, refresh_token, profile, cb) { cb(); });
+    describe('#_error', () => {
+      it('calls the fail method', (done) => {
+        strategy = new Strategy({ callbackURL: '/cb' }, ((access_token, refresh_token, profile, cb) => { cb(); }));
         strategy._error = new Error('test error');
         strategy = Object.create(strategy);
 
-        strategy.fail = function (err, statusCode) {
+        strategy.fail = function fail(err, statusCode) {
           expect(err).to.be.an.instanceOf(Error);
           expect(err.message).to.eql('test error');
           expect(statusCode).to.eql(401);
+          // eslint-disable-next-line no-unused-expressions
           expect(strategy._error).to.not.exist;
           done();
         };
@@ -101,28 +108,29 @@ describe('#authenticate', function (){
       });
     });
 
-    context('when the verify arity is 6', function () {
-      it('handles a verify method that asks for request, access token, refresh token, token response, and profile', function (done) {
-        strategy = new Strategy({ callbackURL: '/cb', passReqToCallback: true }, function (request, access_token, refresh_token, token_response, profile, cb) {
+    context('when the verify arity is 6', () => {
+      it('handles a verify method that asks for request, access token, refresh token, token response, and profile', (done) => {
+        strategy = new Strategy({ callbackURL: '/cb', passReqToCallback: true }, ((request, access_token, refresh_token, token_response, profile, cb) => {
           cb(null, {
-            request: request,
-            profile: profile,
-            token_response: token_response,
-            access_token: access_token,
-            refresh_token: refresh_token
+            request,
+            profile,
+            token_response,
+            access_token,
+            refresh_token,
           });
-        });
+        }));
         strategy._token_response = { access_token: 'at', refresh_token: 'rt' };
         strategy._profile = { id: 1 };
         strategy = Object.create(strategy);
 
-        strategy.success = function (data) {
+        strategy.success = function success(data) {
           expect(data.request).to.eql(req);
           expect(data.access_token).to.eql('at');
           expect(data.refresh_token).to.eql('rt');
           expect(data.profile.id).to.eql(1);
-          expect(data.token_response).to.have.keys('access_token')
+          expect(data.token_response).to.have.keys('access_token');
           expect(data.token_response.access_token).to.eql('at');
+          // eslint-disable-next-line no-unused-expressions
           expect(data.token_response.refresh_token).to.not.exist;
           done();
         };
@@ -131,28 +139,29 @@ describe('#authenticate', function (){
       });
     });
 
-    context('when the verify arity is 5', function () {
-      context('when passReqToCallback is false', function () {
-        it('handles a verify method that asks for access token, refresh token, token response, and profile', function (done) {
-          strategy = new Strategy({ callbackURL: '/cb' }, function (access_token, refresh_token, token_response, profile, cb) {
+    context('when the verify arity is 5', () => {
+      context('when passReqToCallback is false', () => {
+        it('handles a verify method that asks for access token, refresh token, token response, and profile', (done) => {
+          strategy = new Strategy({ callbackURL: '/cb' }, ((access_token, refresh_token, token_response, profile, cb) => {
             cb(null, {
-              profile: profile,
-              token_response: token_response,
-              access_token: access_token,
-              refresh_token: refresh_token
+              profile,
+              token_response,
+              access_token,
+              refresh_token,
             });
-          });
+          }));
 
           strategy._token_response = { access_token: 'at', refresh_token: 'rt' };
           strategy._profile = { id: 1 };
           strategy = Object.create(strategy);
 
-          strategy.success = function (data) {
+          strategy.success = function success(data) {
             expect(data.access_token).to.eql('at');
             expect(data.refresh_token).to.eql('rt');
             expect(data.profile.id).to.eql(1);
-            expect(data.token_response).to.have.keys('access_token')
+            expect(data.token_response).to.have.keys('access_token');
             expect(data.token_response.access_token).to.eql('at');
+            // eslint-disable-next-line no-unused-expressions
             expect(data.token_response.refresh_token).to.not.exist;
             done();
           };
@@ -161,22 +170,22 @@ describe('#authenticate', function (){
         });
       });
 
-      context('when passReqToCallback is true', function () {
-        it('handles a verify method that asks for the request, access_token, refresh_token, and profile', function (done) {
-          strategy = new Strategy({ callbackURL: '/cb', passReqToCallback: true }, function (request, access_token, refresh_token, profile, cb) {
+      context('when passReqToCallback is true', () => {
+        it('handles a verify method that asks for the request, access_token, refresh_token, and profile', (done) => {
+          strategy = new Strategy({ callbackURL: '/cb', passReqToCallback: true }, ((request, access_token, refresh_token, profile, cb) => {
             cb(null, {
-              request: request,
-              profile: profile,
-              access_token: access_token,
-              refresh_token: refresh_token
+              request,
+              profile,
+              access_token,
+              refresh_token,
             });
-          });
+          }));
 
           strategy._token_response = { access_token: 'at', refresh_token: 'rt' };
           strategy._profile = { id: 1 };
           strategy = Object.create(strategy);
 
-          strategy.success = function (data) {
+          strategy.success = function success(data) {
             expect(data.access_token).to.eql('at');
             expect(data.refresh_token).to.eql('rt');
             expect(data.profile.id).to.eql(1);
@@ -186,25 +195,24 @@ describe('#authenticate', function (){
 
           strategy.authenticate(req, {});
         });
-
       });
     });
 
-    context('when the verify arity is 4', function () {
-      it('handles a verify method that asks for accessToken, refreshToken, and profile correctly', function (done) {
-        strategy = new Strategy({ callbackURL: '/cb' }, function (access_token, refresh_token, profile, cb) {
+    context('when the verify arity is 4', () => {
+      it('handles a verify method that asks for accessToken, refreshToken, and profile correctly', (done) => {
+        strategy = new Strategy({ callbackURL: '/cb' }, ((access_token, refresh_token, profile, cb) => {
           cb(null, {
-            profile: profile,
-            access_token: access_token,
-            refresh_token: refresh_token
+            profile,
+            access_token,
+            refresh_token,
           });
-        });
+        }));
 
         strategy._token_response = { access_token: 'at', refresh_token: 'rt' };
         strategy._profile = { id: 1 };
         strategy = Object.create(strategy);
 
-        strategy.success = function (data) {
+        strategy.success = function success(data) {
           expect(data.access_token).to.eql('at');
           expect(data.refresh_token).to.eql('rt');
           expect(data.profile.id).to.eql(1);
@@ -214,16 +222,16 @@ describe('#authenticate', function (){
       });
     });
 
-    context('when the verify arity is 2', function () {
-      it('handles a verify method that asks for tokenResponse correctly', function (done) {
-        strategy = new Strategy({ callbackURL: '/cb' }, function (token_response, cb) {
-          cb(null, { token_response: token_response });
-        });
+    context('when the verify arity is 2', () => {
+      it('handles a verify method that asks for tokenResponse correctly', (done) => {
+        strategy = new Strategy({ callbackURL: '/cb' }, ((token_response, cb) => {
+          cb(null, { token_response });
+        }));
 
         strategy._token_response = { what: 'ever' };
         strategy = Object.create(strategy);
 
-        strategy.success = function (data) {
+        strategy.success = function success(data) {
           expect(data.token_response).to.eql({ what: 'ever' });
           done();
         };
@@ -232,3 +240,5 @@ describe('#authenticate', function (){
     });
   });
 });
+
+/* eslint-enable no-underscore-dangle, camelcase, no-proto */
