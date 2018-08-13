@@ -1,10 +1,13 @@
 # Changelog
 
+## ????
+
+- Add linting to project
+
 ## 1.3.0
 
 - Update passport references to @passport-next references
 - Change license to MIT
-
 
 ## 1.2.0
 
