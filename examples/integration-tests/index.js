@@ -20,9 +20,10 @@ const { Strategy } = require('../../');
 
 configs.forEach((config) => {
   passport.use(new Strategy(config, ((accessToken, refreshToken, profile, done) => {
-    const doneProfile = Object.assign({}, profile);
-    doneProfile.accessToken = accessToken;
-    doneProfile.refreshToken = refreshToken;
+    const doneProfile = Object.assign({}, profile, {
+      accessToken,
+      refreshToken,
+    });
     done(null, doneProfile);
   })));
 });

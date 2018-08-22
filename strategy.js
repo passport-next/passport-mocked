@@ -4,8 +4,12 @@ module.exports = function passportStrategy(passport, util) {
   const clone = function clone(o) { return JSON.parse(JSON.stringify(o)); };
 
   function MockStrategy(options, verify) {
-    if (!verify) { throw new TypeError('MockStrategy requires a verify callback'); }
-    if (!(options.callbackURL || options.client.redirect_uris[0])) { throw new TypeError('MockStrategy requires a callbackURL'); }
+    if (!verify) {
+      throw new TypeError('MockStrategy requires a verify callback');
+    }
+    if (!(options.callbackURL || options.client.redirect_uris[0])) {
+      throw new TypeError('MockStrategy requires a callbackURL');
+    }
 
     this.name = options.name || 'mocked';
     this.verify = verify;
